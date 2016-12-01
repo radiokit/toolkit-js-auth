@@ -58,10 +58,10 @@ export class User {
             }
 
           } else if(xhr.status === 401) {
-            reject(new UnauthorizedError(`Unable to authenticate: Unauthorized`));
+            reject(new UnauthorizedError(`Unauthorized`));
 
           } else {
-            reject(new NetworkError(`Unable to authenticate: Unexpected response (status = ${xhr.status})`));
+            reject(new NetworkError(`Unexpected response (status = ${xhr.status})`));
           }
         }
       };
