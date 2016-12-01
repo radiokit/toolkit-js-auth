@@ -51,7 +51,7 @@ export class User {
           if(xhr.status === 200) {
             const responseAsJson = JSON.parse(xhr.responseText);
             if(responseAsJson["data"].length === 1) {
-              const session = new User(responseAsJson["data"]["access_token"], responseAsJson["data"]["user"]);
+              const session = new User(responseAsJson["data"]["access_token"], responseAsJson["data"]["client_user"]);
               resolve(session);
             } else {
               reject(new NetworkError(`Invalid API response: Record not found`));
