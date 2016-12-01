@@ -48,7 +48,7 @@ export class User {
 
       xhr.onreadystatechange = () => {
         if(xhr.readyState === 4) {
-          if(xhr.status === 200) {
+          if(xhr.status === 201) {
             const responseAsJson = JSON.parse(xhr.responseText);
             if(responseAsJson["data"].length === 1) {
               const session = new User(responseAsJson["data"]["access_token"], responseAsJson["data"]["client_user"]);
