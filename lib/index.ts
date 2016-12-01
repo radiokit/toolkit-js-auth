@@ -1,6 +1,6 @@
 import { User }  from './session/User';
 
-export const RadioKitToolkitAuth = {
+export default {
   Session: {
     User,
   },
