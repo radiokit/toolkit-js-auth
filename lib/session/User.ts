@@ -62,7 +62,7 @@ export class User {
         }
       };
 
-      xhr.send();
+      xhr.send(JSON.stringify({email, password}));
     });
 
     return promise;
