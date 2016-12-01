@@ -1,8 +1,7 @@
-export class UnauthorizedError extends Error {
+import { BaseError } from './BaseError';
+
+export class UnauthorizedError extends BaseError {
   constructor(message: string) {
     super(message);
-
-    this.name = "UnauthorizedError";
-    this.stack = (<any> new Error()).stack;
   }
 }
