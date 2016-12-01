@@ -1,8 +1,14 @@
 import { User }  from './session/User';
+import { UnauthorizedError }  from './error/UnauthorizedError';
+import { NetworkError }  from './error/NetworkError';
 
 export default {
   Session: {
     User,
+  },
+  Error: {
+    UnauthorizedError,
+    NetworkError,
   },
 };
 
@@ -12,6 +18,10 @@ if(typeof(window) !== "undefined") {
   window['RadioKitToolkitAuth'] = {
     Session: {
       User,
-    }
+    },
+    Error: {
+      UnauthorizedError,
+      NetworkError,
+    },
   };
 }

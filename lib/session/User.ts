@@ -1,3 +1,7 @@
+import { UnauthorizedError } from '../error/UnauthorizedError';
+import { NetworkError } from '../error/NetworkError';
+
+
 export class User {
   private __accessToken: string;
   private __user: Object;
@@ -31,15 +35,15 @@ export class User {
       xhr.timeout = 15000;  // ms
 
       xhr.onerror = function(e) {
-        reject(new Error(`Unable to authenticate: Network error (${xhr.status})`));
+        reject(new NetworkError(`Network error (${xhr.status})`));
       }
 
       xhr.onabort = function(e) {
-        reject(new Error(`Unable to authenticate: Aborted`));
+        reject(new NetworkError(`Aborted`));
       }
 
       xhr.ontimeout = function(e) {
-        reject(new Error(`Unable to authenticate: Timeout`));
+        reject(new NetworkError(`Timeout`));
       }
 
       xhr.onreadystatechange = () => {
@@ -50,14 +54,14 @@ export class User {
               const session = new User(responseAsJson["data"]["access_token"], responseAsJson["data"]["user"]);
               resolve(session);
             } else {
-              reject(new Error(`Unable to authenticate: Record not found`));
+              reject(new NetworkError(`Invalid API response: Record not found`));
             }
 
           } else if(xhr.status === 401) {
-            reject(new Error(`Unable to authenticate: Unauthorized`));
+            reject(new UnauthorizedError(`Unable to authenticate: Unauthorized`));
 
           } else {
-            reject(new Error(`Unable to authenticate: Unexpected response (status = ${xhr.status})`));
+            reject(new NetworkError(`Unable to authenticate: Unexpected response (status = ${xhr.status})`));
           }
         }
       };

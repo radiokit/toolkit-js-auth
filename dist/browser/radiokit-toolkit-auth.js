@@ -46,23 +46,38 @@
 
 	"use strict";
 	var User_1 = __webpack_require__(1);
-	exports.Session = {
-	    User: User_1.User,
+	var UnauthorizedError_1 = __webpack_require__(2);
+	var NetworkError_1 = __webpack_require__(3);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = {
+	    Session: {
+	        User: User_1.User,
+	    },
+	    Error: {
+	        UnauthorizedError: UnauthorizedError_1.UnauthorizedError,
+	        NetworkError: NetworkError_1.NetworkError,
+	    },
 	};
 	if (typeof (window) !== "undefined") {
 	    window['RadioKitToolkitAuth'] = {
-	        Client: {
+	        Session: {
 	            User: User_1.User,
-	        }
+	        },
+	        Error: {
+	            UnauthorizedError: UnauthorizedError_1.UnauthorizedError,
+	            NetworkError: NetworkError_1.NetworkError,
+	        },
 	    };
 	}
 
 
 /***/ },
 /* 1 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	var UnauthorizedError_1 = __webpack_require__(2);
+	var NetworkError_1 = __webpack_require__(3);
 	var User = (function () {
 	    function User(accessToken, user) {
 	        this.__accessToken = accessToken;
@@ -78,18 +93,18 @@
 	        var promise = new Promise(function (resolve, reject) {
 	            var xhr = new XMLHttpRequest();
 	            var url = 'https://jungle.radiokitapp.org/api/auth/v1.0/session/user';
-	            xhr.open('GET', url, true);
+	            xhr.open('POST', url, true);
 	            xhr.setRequestHeader('Accept', 'application/json');
 	            xhr.setRequestHeader('Content-Type', 'application/json');
 	            xhr.timeout = 15000;
 	            xhr.onerror = function (e) {
-	                reject(new Error("Unable to authenticate: Network error (" + xhr.status + ")"));
+	                reject(new NetworkError_1.NetworkError("Network error (" + xhr.status + ")"));
 	            };
 	            xhr.onabort = function (e) {
-	                reject(new Error("Unable to authenticate: Aborted"));
+	                reject(new NetworkError_1.NetworkError("Aborted"));
 	            };
 	            xhr.ontimeout = function (e) {
-	                reject(new Error("Unable to authenticate: Timeout"));
+	                reject(new NetworkError_1.NetworkError("Timeout"));
 	            };
 	            xhr.onreadystatechange = function () {
 	                if (xhr.readyState === 4) {
@@ -100,24 +115,68 @@
 	                            resolve(session);
 	                        }
 	                        else {
-	                            reject(new Error("Unable to authenticate: Record not found"));
+	                            reject(new NetworkError_1.NetworkError("Invalid API response: Record not found"));
 	                        }
 	                    }
 	                    else if (xhr.status === 401) {
-	                        reject(new Error("Unable to authenticate: Unauthorized"));
+	                        reject(new UnauthorizedError_1.UnauthorizedError("Unable to authenticate: Unauthorized"));
 	                    }
 	                    else {
-	                        reject(new Error("Unable to authenticate: Unexpected response (status = " + xhr.status + ")"));
+	                        reject(new NetworkError_1.NetworkError("Unable to authenticate: Unexpected response (status = " + xhr.status + ")"));
 	                    }
 	                }
 	            };
-	            xhr.send();
+	            xhr.send(JSON.stringify({ email: email, password: password }));
 	        });
 	        return promise;
 	    };
 	    return User;
 	}());
 	exports.User = User;
+
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var UnauthorizedError = (function (_super) {
+	    __extends(UnauthorizedError, _super);
+	    function UnauthorizedError(message) {
+	        _super.call(this, message);
+	        this.name = "UnauthorizedError";
+	        this.stack = (new Error()).stack;
+	    }
+	    return UnauthorizedError;
+	}(Error));
+	exports.UnauthorizedError = UnauthorizedError;
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var NetworkError = (function (_super) {
+	    __extends(NetworkError, _super);
+	    function NetworkError(message) {
+	        _super.call(this, message);
+	        this.name = "NetworkError";
+	        this.stack = (new Error()).stack;
+	    }
+	    return NetworkError;
+	}(Error));
+	exports.NetworkError = NetworkError;
 
 
 /***/ }
