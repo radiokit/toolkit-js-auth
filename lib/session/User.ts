@@ -25,7 +25,7 @@ export class User {
 
       const url = 'https://jungle.radiokitapp.org/api/auth/v1.0/session/user';
 
-      xhr.open('GET', url, true);
+      xhr.open('POST', url, true);
       xhr.setRequestHeader('Accept', 'application/json');
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.timeout = 15000;  // ms
