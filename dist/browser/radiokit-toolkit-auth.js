@@ -1,0 +1,125 @@
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+/******/
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var User_1 = __webpack_require__(1);
+	exports.Session = {
+	    User: User_1.User,
+	};
+	if (typeof (window) !== "undefined") {
+	    window['RadioKitToolkitAuth'] = {
+	        Client: {
+	            User: User_1.User,
+	        }
+	    };
+	}
+
+
+/***/ },
+/* 1 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var User = (function () {
+	    function User(accessToken, user) {
+	        this.__accessToken = accessToken;
+	        this.__user = user;
+	    }
+	    User.prototype.getAccessToken = function () {
+	        return this.__accessToken;
+	    };
+	    User.prototype.getUser = function () {
+	        return this.__user;
+	    };
+	    User.authenticateAsync = function (email, password) {
+	        var promise = new Promise(function (resolve, reject) {
+	            var xhr = new XMLHttpRequest();
+	            var url = 'https://jungle.radiokitapp.org/api/auth/v1.0/session/user';
+	            xhr.open('GET', url, true);
+	            xhr.setRequestHeader('Accept', 'application/json');
+	            xhr.setRequestHeader('Content-Type', 'application/json');
+	            xhr.timeout = 15000;
+	            xhr.onerror = function (e) {
+	                reject(new Error("Unable to authenticate: Network error (" + xhr.status + ")"));
+	            };
+	            xhr.onabort = function (e) {
+	                reject(new Error("Unable to authenticate: Aborted"));
+	            };
+	            xhr.ontimeout = function (e) {
+	                reject(new Error("Unable to authenticate: Timeout"));
+	            };
+	            xhr.onreadystatechange = function () {
+	                if (xhr.readyState === 4) {
+	                    if (xhr.status === 200) {
+	                        var responseAsJson = JSON.parse(xhr.responseText);
+	                        if (responseAsJson["data"].length === 1) {
+	                            var session = new User(responseAsJson["data"]["access_token"], responseAsJson["data"]["user"]);
+	                            resolve(session);
+	                        }
+	                        else {
+	                            reject(new Error("Unable to authenticate: Record not found"));
+	                        }
+	                    }
+	                    else if (xhr.status === 401) {
+	                        reject(new Error("Unable to authenticate: Unauthorized"));
+	                    }
+	                    else {
+	                        reject(new Error("Unable to authenticate: Unexpected response (status = " + xhr.status + ")"));
+	                    }
+	                }
+	            };
+	            xhr.send();
+	        });
+	        return promise;
+	    };
+	    return User;
+	}());
+	exports.User = User;
+
+
+/***/ }
+/******/ ]);
+//# sourceMappingURL=radiokit-toolkit-auth.js.map

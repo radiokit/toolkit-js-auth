@@ -1,0 +1,24 @@
+{
+  "name": "radiokit-toolkit-auth",
+  "version": "1.0.0",
+  "description": "RadioKit Toolkit for authentication",
+  "main": "lib/index.js",
+  "scripts": {
+    "build-browser": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:radiokit/toolkit-js-auth.git"
+  },
+  "contributors": [
+    "Marcin Lewandowski <marcin@radiokit.org>"
+  ],
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "browserify": "^9.0.8",
+    "typescript": "^2.0.6",
+    "webpack": "^1.13.3",
+    "webpack-typescript": "^0.5.6"
+  }
+}
