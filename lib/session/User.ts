@@ -23,11 +23,16 @@ export class User {
   }
 
 
-  public static authenticateAsync(email: string, password: string) : Promise<User> {
+  public static authenticateAsync(email: string, password: string, options: Object) : Promise<User> {
     const promise = new Promise<User>((resolve: any, reject: any) => {
       const xhr = new XMLHttpRequest();
 
-      const url = 'https://jungle.radiokitapp.org/api/auth/v1.0/session/user';
+      let url;
+      if(options.hasOwnProperty('baseUrl')) {
+        url = `${options['baseUrl']}/api/auth/v1.0/session/user`;
+      } else {
+        url = 'https://jungle.radiokitapp.org/api/auth/v1.0/session/user';
+      }
 
       xhr.open('POST', url, true);
       xhr.setRequestHeader('Accept', 'application/json');
