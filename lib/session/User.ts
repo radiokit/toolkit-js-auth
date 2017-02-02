@@ -22,6 +22,13 @@ export class User {
     return this.__user;
   }
 
+  public static clearCachedCredentials() {
+    if (typeof(Storage) !== "undefined") {
+      localStorage.removeItem("accessToken")
+      localStorage.removeItem("user")
+    }
+  }
+
   private static getCredentialsFromLocalStorage() : User {
     if (typeof(Storage) !== "undefined") {
       const accessToken = localStorage.getItem("accessToken");

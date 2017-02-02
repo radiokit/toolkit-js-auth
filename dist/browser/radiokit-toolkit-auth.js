@@ -89,6 +89,12 @@
 	    User.prototype.getUser = function () {
 	        return this.__user;
 	    };
+	    User.clearCachedCredentials = function () {
+	        if (typeof (Storage) !== "undefined") {
+	            localStorage.removeItem("accessToken");
+	            localStorage.removeItem("user");
+	        }
+	    };
 	    User.getCredentialsFromLocalStorage = function () {
 	        if (typeof (Storage) !== "undefined") {
 	            var accessToken = localStorage.getItem("accessToken");
