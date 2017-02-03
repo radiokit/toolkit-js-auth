@@ -47,7 +47,7 @@
 	"use strict";
 	var User_1 = __webpack_require__(1);
 	var UnauthorizedError_1 = __webpack_require__(2);
-	var NetworkError_1 = __webpack_require__(3);
+	var NetworkError_1 = __webpack_require__(4);
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = {
 	    Session: {
@@ -77,7 +77,7 @@
 
 	"use strict";
 	var UnauthorizedError_1 = __webpack_require__(2);
-	var NetworkError_1 = __webpack_require__(3);
+	var NetworkError_1 = __webpack_require__(4);
 	var User = (function () {
 	    function User(accessToken, user) {
 	        this.__accessToken = accessToken;
@@ -89,10 +89,46 @@
 	    User.prototype.getUser = function () {
 	        return this.__user;
 	    };
-	    User.authenticateAsync = function (email, password) {
+	    User.clearCachedCredentials = function () {
+	        if (typeof (Storage) !== "undefined") {
+	            localStorage.removeItem("RadioKit.Auth.accessToken");
+	            localStorage.removeItem("RadioKit.Auth.user");
+	        }
+	    };
+	    User.getCredentialsFromLocalStorage = function () {
+	        if (typeof (Storage) !== "undefined") {
+	            var accessToken = localStorage.getItem("RadioKit.Auth.accessToken");
+	            var user = JSON.parse(localStorage.getItem("RadioKit.Auth.user"));
+	            if (accessToken !== null && user !== null) {
+	                var session = new User(accessToken, user);
+	                return session;
+	            }
+	        }
+	        return null;
+	    };
+	    User.saveCredentialsToLocalStorage = function (user) {
+	        if (typeof (Storage) !== "undefined") {
+	            localStorage.setItem("RadioKit.Auth.accessToken", user.getAccessToken());
+	            localStorage.setItem("RadioKit.Auth.user", JSON.stringify(user.getUser()));
+	        }
+	    };
+	    User.authenticateAsync = function (email, password, options, storeCredentials) {
+	        if (storeCredentials === void 0) { storeCredentials = false; }
 	        var promise = new Promise(function (resolve, reject) {
+	            if (storeCredentials) {
+	                var session = User.getCredentialsFromLocalStorage();
+	                if (session !== null) {
+	                    return resolve(session);
+	                }
+	            }
 	            var xhr = new XMLHttpRequest();
-	            var url = 'https://jungle.radiokitapp.org/api/auth/v1.0/session/user';
+	            var url;
+	            if (options.hasOwnProperty('baseUrl')) {
+	                url = options['baseUrl'] + "/api/auth/v1.0/session/user";
+	            }
+	            else {
+	                url = 'https://jungle.radiokitapp.org/api/auth/v1.0/session/user';
+	            }
 	            xhr.open('POST', url, true);
 	            xhr.setRequestHeader('Accept', 'application/json');
 	            xhr.setRequestHeader('Content-Type', 'application/json');
@@ -108,10 +144,13 @@
 	            };
 	            xhr.onreadystatechange = function () {
 	                if (xhr.readyState === 4) {
-	                    if (xhr.status === 200) {
+	                    if (xhr.status === 201) {
 	                        var responseAsJson = JSON.parse(xhr.responseText);
-	                        if (responseAsJson["data"].length === 1) {
-	                            var session = new User(responseAsJson["data"]["access_token"], responseAsJson["data"]["user"]);
+	                        if (responseAsJson["data"]) {
+	                            var session = new User(responseAsJson["data"]["access_token"], responseAsJson["data"]["client_user"]);
+	                            if (storeCredentials) {
+	                                User.saveCredentialsToLocalStorage(session);
+	                            }
 	                            resolve(session);
 	                        }
 	                        else {
@@ -119,10 +158,10 @@
 	                        }
 	                    }
 	                    else if (xhr.status === 401) {
-	                        reject(new UnauthorizedError_1.UnauthorizedError("Unable to authenticate: Unauthorized"));
+	                        reject(new UnauthorizedError_1.UnauthorizedError("Unauthorized"));
 	                    }
 	                    else {
-	                        reject(new NetworkError_1.NetworkError("Unable to authenticate: Unexpected response (status = " + xhr.status + ")"));
+	                        reject(new NetworkError_1.NetworkError("Unexpected response (status = " + xhr.status + ")"));
 	                    }
 	                }
 	            };
@@ -137,7 +176,7 @@
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
@@ -145,15 +184,14 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
+	var BaseError_1 = __webpack_require__(3);
 	var UnauthorizedError = (function (_super) {
 	    __extends(UnauthorizedError, _super);
 	    function UnauthorizedError(message) {
 	        _super.call(this, message);
-	        this.name = "UnauthorizedError";
-	        this.stack = (new Error()).stack;
 	    }
 	    return UnauthorizedError;
-	}(Error));
+	}(BaseError_1.BaseError));
 	exports.UnauthorizedError = UnauthorizedError;
 
 
@@ -162,20 +200,34 @@
 /***/ function(module, exports) {
 
 	"use strict";
+	var BaseError = (function () {
+	    function BaseError(message) {
+	        this.message = message;
+	    }
+	    return BaseError;
+	}());
+	exports.BaseError = BaseError;
+	BaseError.prototype = new Error();
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
+	var BaseError_1 = __webpack_require__(3);
 	var NetworkError = (function (_super) {
 	    __extends(NetworkError, _super);
 	    function NetworkError(message) {
 	        _super.call(this, message);
-	        this.name = "NetworkError";
-	        this.stack = (new Error()).stack;
 	    }
 	    return NetworkError;
-	}(Error));
+	}(BaseError_1.BaseError));
 	exports.NetworkError = NetworkError;
 
 
