@@ -188,7 +188,7 @@
 	var UnauthorizedError = (function (_super) {
 	    __extends(UnauthorizedError, _super);
 	    function UnauthorizedError(message) {
-	        _super.call(this, message);
+	        return _super.call(this, message) || this;
 	    }
 	    return UnauthorizedError;
 	}(BaseError_1.BaseError));
@@ -224,7 +224,7 @@
 	var NetworkError = (function (_super) {
 	    __extends(NetworkError, _super);
 	    function NetworkError(message) {
-	        _super.call(this, message);
+	        return _super.call(this, message) || this;
 	    }
 	    return NetworkError;
 	}(BaseError_1.BaseError));

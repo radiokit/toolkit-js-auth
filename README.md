@@ -32,6 +32,7 @@ RadioKitToolkitAuth.Session.User.authenticateAsync('a@a.pl', 'pass')
 # Authors
 
 Marcin Lewandowski <marcin@radiokit.org>
+Tomasz Pałys <tomasz.palys@swmansion.com>
 
 # License
 
