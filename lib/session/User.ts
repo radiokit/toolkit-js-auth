@@ -24,15 +24,15 @@ export class User {
 
   public static clearCachedCredentials() {
     if (typeof(Storage) !== "undefined") {
-      localStorage.removeItem("accessToken")
-      localStorage.removeItem("user")
+      localStorage.removeItem("RadioKit.Auth.accessToken")
+      localStorage.removeItem("RadioKit.Auth.user")
     }
   }
 
   private static getCredentialsFromLocalStorage() : User {
     if (typeof(Storage) !== "undefined") {
-      const accessToken = localStorage.getItem("accessToken");
-      const user = JSON.parse(localStorage.getItem("user"));
+      const accessToken = localStorage.getItem("RadioKit.Auth.accessToken");
+      const user = JSON.parse(localStorage.getItem("RadioKit.Auth.user"));
       if (accessToken !== null && user !== null) {
         const session = new User(accessToken, user);
         return session;
@@ -43,8 +43,8 @@ export class User {
 
   private static saveCredentialsToLocalStorage(user: User) {
     if (typeof(Storage) !== "undefined") {
-      localStorage.setItem("accessToken", user.__accessToken);
-      localStorage.setItem("user", JSON.stringify(user.__user));
+      localStorage.setItem("RadioKit.Auth.accessToken", user.getAccessToken());
+      localStorage.setItem("RadioKit.Auth.user", JSON.stringify(user.getUser()));
     }
   }
 

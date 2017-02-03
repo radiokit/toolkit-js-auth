@@ -91,14 +91,14 @@
 	    };
 	    User.clearCachedCredentials = function () {
 	        if (typeof (Storage) !== "undefined") {
-	            localStorage.removeItem("accessToken");
-	            localStorage.removeItem("user");
+	            localStorage.removeItem("RadioKit.Auth.accessToken");
+	            localStorage.removeItem("RadioKit.Auth.user");
 	        }
 	    };
 	    User.getCredentialsFromLocalStorage = function () {
 	        if (typeof (Storage) !== "undefined") {
-	            var accessToken = localStorage.getItem("accessToken");
-	            var user = JSON.parse(localStorage.getItem("user"));
+	            var accessToken = localStorage.getItem("RadioKit.Auth.accessToken");
+	            var user = JSON.parse(localStorage.getItem("RadioKit.Auth.user"));
 	            if (accessToken !== null && user !== null) {
 	                var session = new User(accessToken, user);
 	                return session;
@@ -108,8 +108,8 @@
 	    };
 	    User.saveCredentialsToLocalStorage = function (user) {
 	        if (typeof (Storage) !== "undefined") {
-	            localStorage.setItem("accessToken", user.__accessToken);
-	            localStorage.setItem("user", JSON.stringify(user.__user));
+	            localStorage.setItem("RadioKit.Auth.accessToken", user.getAccessToken());
+	            localStorage.setItem("RadioKit.Auth.user", JSON.stringify(user.getUser()));
 	        }
 	    };
 	    User.authenticateAsync = function (email, password, options, storeCredentials) {
